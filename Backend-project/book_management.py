@@ -23,6 +23,28 @@ class Book:
     def get_year(self):
         return self.__year
 
+    # Setter methods: controlled modification with validation (encapsulation)
+    def set_title(self, new_title):
+        # Validation: title must not be empty
+        if isinstance(new_title, str) and new_title.strip() != "":
+            self.__title = new_title
+        else:
+            print("Invalid title! Title cannot be empty.")
+
+    def set_author(self, new_author):
+        # Validation: author must not be empty
+        if isinstance(new_author, str) and new_author.strip() != "":
+            self.__author = new_author
+        else:
+            print("Invalid author! Author cannot be empty.")
+
+    def set_year(self, new_year):
+        # Validation: year must be a positive integer
+        if isinstance(new_year, int) and new_year > 0:
+            self.__year = new_year
+        else:
+            print("Invalid year! Year must be a positive integer.")
+
     def display_info(self):
         # Polymorphism: subclasses override this method with their own version
         return f"'{self.__title}' by {self.__author} ({self.__year})"
