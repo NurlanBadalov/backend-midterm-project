@@ -5,14 +5,22 @@ import random
 
 RESULTS_FILE = "hangman_results.txt"
 
-# List of predefined words (criteria: arrays/lists)
-WORDS = ["python", "github", "keyboard", "monitor", "backend", "function"]
+# List of predefined words, each paired with a category (used as a hint)
+# (criteria: arrays/lists)
+WORDS = [
+    ("python", "programming language"),
+    ("guitar", "musical instrument"),
+    ("elephant", "animal"),
+    ("pizza", "food"),
+    ("soccer", "sport"),
+    ("mountain", "nature"),
+]
 
 MAX_ATTEMPTS = 6  # maximum wrong guesses allowed
 
 
 def choose_word():
-    # Pick a random word from the predefined list
+    # Pick a random (word, category) pair from the predefined list
     return random.choice(WORDS)
 
 
@@ -27,33 +35,46 @@ def display_word(word, guessed_letters):
     return result.strip()
 
 
-def get_valid_letter(guessed_letters):
-    # Ask for a letter and validate the input
+def get_valid_letter(guessed_letters, word):
+    # Ask for a letter and validate the input.
+    # Also accepts the FULL word as a guess (whole-word guessing).
     while True:
-        letter = input("Guess a letter: ").lower().strip()
-        if len(letter) != 1:
-            print("Please enter exactly one letter.")
-        elif not letter.isalpha():
+        entry = input("Guess a letter (or type the whole word): ").lower().strip()
+
+        if entry == word:
+            # Player typed the entire word correctly
+            return entry
+
+        if len(entry) != 1:
+            print("Please enter exactly one letter (or the full word if you know it).")
+        elif not entry.isalpha():
             print("Please enter a letter (a-z), not a number or symbol.")
-        elif letter in guessed_letters:
+        elif entry in guessed_letters:
             print("You already guessed that letter, try another one.")
         else:
-            return letter
+            return entry
 
 
 def play_game():
     # One full round of Hangman; returns True if player won
-    word = choose_word()
+    word, category = choose_word()
     guessed_letters = []  # list of letters the player has tried
     wrong_attempts = 0
 
     print("\nThe word has", len(word), "letters.")
+    print(f"Hint: this word is related to '{category}'.")
 
     while wrong_attempts < MAX_ATTEMPTS:
         print("\nWord:", display_word(word, guessed_letters))
         print(f"Wrong attempts: {wrong_attempts}/{MAX_ATTEMPTS}")
 
-        letter = get_valid_letter(guessed_letters)
+        letter = get_valid_letter(guessed_letters, word)
+
+        if letter == word:
+            # Whole word guessed correctly
+            print(f"\nYou won! You guessed the whole word: '{word}'.")
+            return True
+
         guessed_letters.append(letter)
 
         if letter in word:
